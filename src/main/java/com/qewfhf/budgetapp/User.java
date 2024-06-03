@@ -21,8 +21,8 @@ public class User {
     private String userId;
     private String email;
     private List<Account> accountList;
-
-    public User(String email, String name) {
+    private List<Transaction> transactionList;
+    public User(String name, String email) {
         this.email = email;
         this.name = name;
         this.userId = UUID.randomUUID().toString();

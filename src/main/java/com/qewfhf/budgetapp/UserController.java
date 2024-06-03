@@ -18,8 +18,8 @@ public class UserController {
     public ResponseEntity<Optional<User>> getUser(@PathVariable String userId){
         return new ResponseEntity<Optional<User>>(userService.getUserByUserId(userId), HttpStatus.OK);
     }
-    @PostMapping("/newUser")
-    public ResponseEntity<User> createAccount(@RequestBody Map<String, String> payload){
+    @PostMapping("/new-user")
+    public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload){
         return new ResponseEntity<User>(userService.createUser(payload.get("name"), payload.get("email")), HttpStatus.CREATED);
     }
 }

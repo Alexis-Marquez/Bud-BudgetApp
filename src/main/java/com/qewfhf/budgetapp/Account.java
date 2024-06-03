@@ -26,7 +26,6 @@ public class Account {
     private BigDecimal balance;
     private String name;
 //    @DocumentReference can be used to connect only the reference of the transaction and keep the transaction in a different collection
-    private List<Transaction> transactionList;
 
     public Account(String userId, String type, String name) {
         this.accountId = UUID.randomUUID().toString();

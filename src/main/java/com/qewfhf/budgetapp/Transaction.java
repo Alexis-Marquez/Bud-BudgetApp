@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Document(collection = "transactions")
@@ -19,11 +20,19 @@ public class Transaction {
     @Id
     private ObjectId id;
     private String accountId;
-    private LocalDate time;
+    private String userId;
+    private LocalDateTime time;
     private BigDecimal amount;
-    public Transaction(String accountId, LocalDate time, BigDecimal amount) {
+    private String name;
+    private String description;
+    private String accountName;
+    public Transaction(String accountId, String userId, LocalDateTime time, BigDecimal amount,String name, String accountName, String description) {
         this.accountId = accountId;
+        this.userId = userId;
         this.time = time;
         this.amount = amount;
+        this.name = name;
+        this.accountName = accountName;
+        this.description = description;
     }
 }

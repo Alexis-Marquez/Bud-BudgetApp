@@ -19,21 +19,22 @@ public class AccountsController {
 //    public ResponseEntity<Optional<ArrayList<Account>>> getAccountByTypeAndUserId(@PathVariable String type, @PathVariable String userId){
 //        return new ResponseEntity<Optional<ArrayList<Account>>>(accountService.accountsByTypeAndUserId(type,userId),HttpStatus.OK);
 //    }
-@DeleteMapping("/Accounts/{id}")
+@DeleteMapping("/{id}")
 public ResponseEntity<Optional<Account>> deleteAccountById(@PathVariable String id){
     return new ResponseEntity<>(accountService.deleteAccountById(id), HttpStatus.OK);
 }
-    @GetMapping("/AllAccounts")
+    @GetMapping("/all-accounts")
     public ResponseEntity<Optional<List<Account>>> getAllAccounts(@PathVariable String userId){
         return new ResponseEntity<>(accountService.getAccountsByUserId(userId), HttpStatus.OK);
     }
-    @PostMapping("/newAccount")
-    public ResponseEntity<Account> createAccount(@RequestBody Map<String, String> payload){
-        return new ResponseEntity<Account>(accountService.createAccount(payload.get("userId"), payload.get("type") ,payload.get("name")), HttpStatus.CREATED);
+    @PostMapping("/new-account")
+    public ResponseEntity<Account> createAccount(@RequestBody Map<String, String> payload, @PathVariable String userId){
+        return new ResponseEntity<Account>(accountService.createAccount(userId, payload.get("type") ,payload.get("name")), HttpStatus.CREATED);
     }
-       @GetMapping("/{id}")
+       @GetMapping("/account/{id}")
     public ResponseEntity<Optional<Account>> getSingleAccount(@PathVariable String id, @PathVariable String userId){
         return new ResponseEntity<Optional<Account>>(accountService.singleAccountByUserId(id, userId),HttpStatus.OK);
     }
+
 }
 
