@@ -19,18 +19,19 @@ import java.util.Optional;
 
 @Service
 public class TransactionService {
+    private int numberOfItemsPerPage = 5;
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
     private AccountService accountService;
     @Autowired
     private MongoTemplate mongoTemplate;//for more complex operations
-    public Transaction createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time,String name, String description) throws AccountNotFoundException {
+    public Transaction createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time,String name, String description, String category) throws AccountNotFoundException {
         Optional<Account> curr = accountService.singleAccount(accountId);
         if(curr.isEmpty()){
             throw new AccountNotFoundException();
         }
-        Transaction transaction = transactionRepository.insert(new Transaction(accountId, userId, time, amount,name,curr.get().getName(),description));
+        Transaction transaction = transactionRepository.insert(new Transaction(accountId, userId, time, amount,name,curr.get().getName(),description, category));
             mongoTemplate.update(User.class)
                     .matching(Criteria.where("userId").is(userId))
                     .apply(new Update().push("transactionList").value(transaction))
@@ -43,15 +44,10 @@ public class TransactionService {
     }
 
     public List<Transaction> getRecentTransactions(String userId, int page) {
-        List<Transaction> AllTrans=transactionRepository.findTransactionByUserId(userId);
+        List<Transaction> AllTrans=transactionRepository.findTransactionByUserIdOrderByTimeDesc(userId);
         System.out.println(AllTrans.size());
-        int upperIndex;
-        if(page*10-1>AllTrans.size()){
-            upperIndex = AllTrans.size();
-        }
-        else {
-            upperIndex=page*10-1;
-        }
-        return AllTrans.subList(page-1, upperIndex);
+        int upperIndex = Math.min(page * numberOfItemsPerPage, AllTrans.size());
+        int lowerIndex = Math.max(upperIndex-numberOfItemsPerPage, 0);
+        return AllTrans.subList(lowerIndex, upperIndex);
     }
 }

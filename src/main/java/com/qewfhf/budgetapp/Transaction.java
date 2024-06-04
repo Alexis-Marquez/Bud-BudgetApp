@@ -26,7 +26,8 @@ public class Transaction {
     private String name;
     private String description;
     private String accountName;
-    public Transaction(String accountId, String userId, LocalDateTime time, BigDecimal amount,String name, String accountName, String description) {
+    private String category;
+    public Transaction(String accountId, String userId, LocalDateTime time, BigDecimal amount,String name, String accountName, String description, String category) {
         this.accountId = accountId;
         this.userId = userId;
         this.time = time;
@@ -34,5 +35,6 @@ public class Transaction {
         this.name = name;
         this.accountName = accountName;
         this.description = description;
+        this.category = category;
     }
 }

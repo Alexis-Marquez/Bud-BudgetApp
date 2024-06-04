@@ -13,5 +13,5 @@ public interface TransactionRepository extends MongoRepository<Transaction, Obje
 
     void deleteAllByAccountId(String id);
 
-    List<Transaction> findTransactionByUserId(String id);
+    List<Transaction> findTransactionByUserIdOrderByTimeDesc(String id);
 }
