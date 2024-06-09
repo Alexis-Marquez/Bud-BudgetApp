@@ -15,17 +15,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping("/api/transactions/{userId}")
 public class TransactionController {
 @Autowired
     private TransactionService transactionService;
 @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Map<String, String> payload) throws AccountNotFoundException {
-        return new ResponseEntity<Transaction>(transactionService.createTransaction(new BigDecimal(payload.get("amount")),payload.get("accountId"),payload.get("userId"), LocalDateTime.parse(payload.get("time")), payload.get("name"), payload.get("description"), payload.get("category")), HttpStatus.CREATED);
+    public ResponseEntity<Transaction> createTransaction(@RequestBody Map<String, String> payload, @PathVariable String userId) throws AccountNotFoundException {
+        return new ResponseEntity<Transaction>(transactionService.createTransaction(new BigDecimal(payload.get("Amount")),payload.get("AccountId"),userId, LocalDateTime.parse(payload.get("DateTime")), payload.get("Name"), payload.get("Description"), payload.get("Category")), HttpStatus.CREATED);
 }
-@GetMapping("/{userId}/{page}")
-    public ResponseEntity<List<Transaction>> getRecentTransactions(@PathVariable String userId, @PathVariable int page){
-        return new ResponseEntity<List<Transaction>>(transactionService.getRecentTransactions(userId, page), HttpStatus.OK);
+@GetMapping("/{page}")
+    public ResponseEntity<List<Transaction>> getNextPageRecentTransactions(@PathVariable String userId, @PathVariable int page){
+    return new ResponseEntity<>(transactionService.getNext5RecentTransactions(userId, page),HttpStatus.OK);
 }
-
 }

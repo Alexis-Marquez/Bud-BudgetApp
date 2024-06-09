@@ -2,6 +2,7 @@ package com.qewfhf.budgetapp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,6 +30,7 @@ public class TransactionService {
     public Transaction createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time,String name, String description, String category) throws AccountNotFoundException {
         Optional<Account> curr = accountService.singleAccount(accountId);
         if(curr.isEmpty()){
+            System.out.println(accountId);
             throw new AccountNotFoundException();
         }
         Transaction transaction = transactionRepository.insert(new Transaction(accountId, userId, time, amount,name,curr.get().getName(),description, category));
@@ -42,12 +44,8 @@ public class TransactionService {
             mongoTemplate.updateFirst(query, updateOp, Account.class);
             return transaction;
     }
-
-    public List<Transaction> getRecentTransactions(String userId, int page) {
-        List<Transaction> AllTrans=transactionRepository.findTransactionByUserIdOrderByTimeDesc(userId);
-        System.out.println(AllTrans.size());
-        int upperIndex = Math.min(page * numberOfItemsPerPage, AllTrans.size());
-        int lowerIndex = Math.max(upperIndex-numberOfItemsPerPage, 0);
-        return AllTrans.subList(lowerIndex, upperIndex);
+    public List<Transaction> getNext5RecentTransactions(String userId, int page) {
+        Pageable pageable = PageRequest.of(page-1, 5); // Skip 10, take 5
+        return transactionRepository.findNext5ByUserIdOrderByTimeDesc(userId, pageable);
     }
 }
