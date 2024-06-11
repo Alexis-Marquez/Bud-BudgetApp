@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,6 @@ public class User {
     }
     @Scheduled(cron = "0 0 0 1 * ?") // Run on the 1st day of each month
     public void scheduleMonthlyTask() {
-        budgetsList.addFirst(new Budget(YearMonth.now(),budgetMonth));
+        budgetsList.add(0,new Budget(YearMonth.now().toString(),budgetMonth,this.userId));
     }
 }

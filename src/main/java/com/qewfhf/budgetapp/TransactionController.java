@@ -21,7 +21,7 @@ public class TransactionController {
     private TransactionService transactionService;
 @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody Map<String, String> payload, @PathVariable String userId) throws AccountNotFoundException {
-        return new ResponseEntity<Transaction>(transactionService.createTransaction(new BigDecimal(payload.get("Amount")),payload.get("AccountId"),userId, LocalDateTime.parse(payload.get("DateTime")), payload.get("Name"), payload.get("Description"), payload.get("Category")), HttpStatus.CREATED);
+        return new ResponseEntity<Transaction>(transactionService.createTransaction(new BigDecimal(payload.get("Amount")),payload.get("AccountId"),userId, LocalDateTime.parse(payload.get("DateTime")), payload.get("Name"), payload.get("Description"), payload.get("Category"), payload.get("type")), HttpStatus.CREATED);
 }
 @GetMapping("/{page}")
     public ResponseEntity<List<Transaction>> getNextPageRecentTransactions(@PathVariable String userId, @PathVariable int page){
