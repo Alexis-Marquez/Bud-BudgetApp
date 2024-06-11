@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Service
 public class TransactionService {
-    private int numberOfItemsPerPage = 5;
+    private final int numberOfItemsPerPage = 5;
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
