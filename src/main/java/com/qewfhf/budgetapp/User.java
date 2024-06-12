@@ -32,13 +32,16 @@ public class User {
     private List<Transaction> transactionList;
     private List<Budget> budgetsList;
     private BigDecimal budgetMonth;
+    private List<String> availableCategories;
     public User(String name, String email) {
         this.email = email;
         this.name = name;
         this.userId = UUID.randomUUID().toString();
+        availableCategories.add("Expenses");
+        availableCategories.add("Income");
     }
     @Scheduled(cron = "0 0 0 1 * ?") // Run on the 1st day of each month
-    public void scheduleMonthlyTask() {
+    public void scheduleMonthlyAddBudget() {
         budgetsList.add(0,new Budget(YearMonth.now().toString(),budgetMonth,this.userId));
     }
 }

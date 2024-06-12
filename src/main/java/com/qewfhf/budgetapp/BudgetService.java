@@ -17,7 +17,7 @@ public class BudgetService {
         return budgetRepository.findBudgetById(id);
     }
 
-    public Optional<Budget> getBudgetByUserId(String userId, String currentYearMonth) {
-        return budgetRepository.findBudgetByUserIdAndMonthYear(userId, currentYearMonth);
+    public Optional<Budget> getBudgetByUserId(String userId) {
+        return budgetRepository.findBudgetByUserIdAndMonthYear(userId, YearMonth.now().toString());
     }
 }

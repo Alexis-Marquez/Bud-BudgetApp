@@ -20,6 +20,6 @@ public class BudgetController {
     private BudgetService budgetService;
     @GetMapping("/latestBudget")
     public ResponseEntity<Optional<Budget>> getLatestBudget(@PathVariable String userId){
-        return new ResponseEntity<>(budgetService.getBudgetByUserId(userId, YearMonth.now().toString()), HttpStatus.OK);
+        return new ResponseEntity<>(budgetService.getBudgetByUserId(userId), HttpStatus.OK);
     }
 }

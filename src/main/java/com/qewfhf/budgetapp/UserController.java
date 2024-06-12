@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +22,10 @@ public class UserController {
     @PostMapping("/new-user")
     public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload){
         return new ResponseEntity<User>(userService.createUser(payload.get("name"), payload.get("email")), HttpStatus.CREATED);
+    }
+    @PatchMapping("/{userId}/modify-budget/{newTotal}")
+    public ResponseEntity<Optional<User>> modifyBudget(@PathVariable String userId, @PathVariable BigDecimal newTotal){
+        return new ResponseEntity<>(userService.createBudget(userId, newTotal), HttpStatus.ACCEPTED);
     }
 }
 
