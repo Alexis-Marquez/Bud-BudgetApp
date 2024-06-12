@@ -19,6 +19,10 @@ public class UserController {
     public ResponseEntity<Optional<User>> getUser(@PathVariable String userId){
         return new ResponseEntity<Optional<User>>(userService.getUserByUserId(userId), HttpStatus.OK);
     }
+    @GetMapping("/{userId}/categories")
+    public ResponseEntity<List<String>> getAvailableCategories(@PathVariable String userId){
+        return new ResponseEntity<>(userService.getAvailableCategories(userId), HttpStatus.OK);
+    }
     @PostMapping("/new-user")
     public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload){
         return new ResponseEntity<User>(userService.createUser(payload.get("name"), payload.get("email")), HttpStatus.CREATED);

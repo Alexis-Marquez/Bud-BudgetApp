@@ -10,6 +10,7 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,6 +51,10 @@ public class UserService {
                     .first();
         }
         return userRepository.findUserByUserId(userId);
+    }
+
+    public List<String> getAvailableCategories(String userId) {
+        return userRepository.findUserByUserId(userId).orElseThrow().getAvailableCategories();
     }
 }
 
