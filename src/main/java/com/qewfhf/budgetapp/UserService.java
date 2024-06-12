@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -27,17 +28,27 @@ public class UserService {
         return userRepository.insert(new User(name, email));
     }
 
-    private void modifyBudget(String userId, BigDecimal newTotal) {
+    private void modifyBudget(String userId, BigDecimal newTotal) { //Sets the max budget field
         Query queryFindUser = new Query(new Criteria("userId").is(userId));
         Update updateOpBudget = new Update().set("budgetMonth", newTotal);
         mongoTemplate.updateFirst(queryFindUser, updateOpBudget, User.class);
     }
-    public Optional<User> createBudget(String userId, BigDecimal newTotal) {
+    public Optional<User> createBudget(String userId, BigDecimal newTotal) { //creates a new budget with the current balance in case it is in the middle of the month
         modifyBudget(userId, newTotal);
-        mongoTemplate.update(User.class)
-                .matching(Criteria.where("userId").is(userId))
-                .apply(new Update().push("budgetList").value(new Budget(YearMonth.now().toString(),newTotal,userId)))
-                .first();
+        Optional<Budget> curr = budgetService.getBudgetByUserId(userId);
+        if (curr.isPresent()) {
+            BigDecimal currBudget = curr.orElseThrow().getCurrentBalance();
+            mongoTemplate.update(User.class)
+                    .matching(Criteria.where("userId").is(userId))
+                    .apply(new Update().push("budgetList").value(new Budget(YearMonth.now().toString(), newTotal, userId, currBudget)))
+                    .first();
+        }
+        else{
+            mongoTemplate.update(User.class)
+                    .matching(Criteria.where("userId").is(userId))
+                    .apply(new Update().push("budgetList").value(new Budget(YearMonth.now().toString(), newTotal, userId)))
+                    .first();
+        }
         return userRepository.findUserByUserId(userId);
     }
 }

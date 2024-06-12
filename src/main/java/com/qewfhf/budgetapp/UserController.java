@@ -23,7 +23,7 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload){
         return new ResponseEntity<User>(userService.createUser(payload.get("name"), payload.get("email")), HttpStatus.CREATED);
     }
-    @PatchMapping("/{userId}/modify-budget/{newTotal}")
+    @PatchMapping("/{userId}/modify-budget/{newTotal}") //Only use when creating the first month budget of a new account or when modifying the current budget limit
     public ResponseEntity<Optional<User>> modifyBudget(@PathVariable String userId, @PathVariable BigDecimal newTotal){
         return new ResponseEntity<>(userService.createBudget(userId, newTotal), HttpStatus.ACCEPTED);
     }

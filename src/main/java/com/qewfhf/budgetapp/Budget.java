@@ -31,5 +31,11 @@ public class Budget {
         this.currentBalance = budgetMax;
         this.userId = userId;
     }
+    public Budget(String monthYear, BigDecimal budgetMax, String userId, BigDecimal currentBalance){
+        this.monthYear = monthYear;
+        this.budgetMax=budgetMax;
+        this.currentBalance = currentBalance;
+        this.userId = userId;
+    }
 
 }
