@@ -1,19 +1,21 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Transactions;
 
+import com.qewfhf.budgetapp.Accounts.Account;
+import com.qewfhf.budgetapp.Accounts.AccountService;
+import com.qewfhf.budgetapp.Budgets.Budget;
+import com.qewfhf.budgetapp.Budgets.BudgetService;
+import com.qewfhf.budgetapp.Users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class TransactionService {
     private BudgetService budgetService;
     @Autowired
     private MongoTemplate mongoTemplate;//for more complex operations
-    public Transaction createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time,String name, String description, String category, String type) throws AccountNotFoundException {
+    public Transaction createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time, String name, String description, String category, String type) throws AccountNotFoundException {
         Optional<Account> curr = accountService.singleAccount(accountId);
         if(curr.isEmpty()){
             System.out.println(accountId);

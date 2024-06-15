@@ -1,4 +1,4 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Accounts;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

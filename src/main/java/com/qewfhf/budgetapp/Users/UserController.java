@@ -1,4 +1,4 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Users;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

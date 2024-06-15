@@ -1,5 +1,6 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Accounts;
 
+import com.qewfhf.budgetapp.Accounts.Account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SavingsAccount extends Account{
+public class SavingsAccount extends Account {
     private double rate;
 }

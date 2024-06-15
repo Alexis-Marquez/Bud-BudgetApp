@@ -1,10 +1,11 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Accounts;
 
+import com.qewfhf.budgetapp.Transactions.TransactionRepository;
+import com.qewfhf.budgetapp.Users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

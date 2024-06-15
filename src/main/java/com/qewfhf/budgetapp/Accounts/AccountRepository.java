@@ -1,11 +1,10 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Accounts;
 
+import com.qewfhf.budgetapp.Accounts.Account;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

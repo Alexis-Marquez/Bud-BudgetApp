@@ -1,5 +1,8 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Users;
 
+import com.qewfhf.budgetapp.Accounts.Account;
+import com.qewfhf.budgetapp.Budgets.Budget;
+import com.qewfhf.budgetapp.Transactions.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

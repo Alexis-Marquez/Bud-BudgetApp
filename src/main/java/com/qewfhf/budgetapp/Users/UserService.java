@@ -1,12 +1,15 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Users;
 
+import com.qewfhf.budgetapp.Budgets.Budget;
+import com.qewfhf.budgetapp.Budgets.BudgetService;
+import com.qewfhf.budgetapp.Users.User;
+import com.qewfhf.budgetapp.Users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -56,5 +59,6 @@ public class UserService {
     public List<String> getAvailableCategories(String userId) {
         return userRepository.findUserByUserId(userId).orElseThrow().getAvailableCategories();
     }
+
 }
 

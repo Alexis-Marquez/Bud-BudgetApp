@@ -1,4 +1,4 @@
-package com.qewfhf.budgetapp;
+package com.qewfhf.budgetapp.Budgets;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.List;
 
 @Document(collection = "budgets")
 @Data
@@ -25,11 +26,13 @@ public class Budget {
     private final String monthYear;
     private String userId;
 
+
     public Budget(String monthYear, BigDecimal budgetMax, String userId) {
         this.monthYear = monthYear;
         this.budgetMax=budgetMax;
         this.currentBalance = budgetMax;
         this.userId = userId;
+
     }
     public Budget(String monthYear, BigDecimal budgetMax, String userId, BigDecimal currentBalance){
         this.monthYear = monthYear;
