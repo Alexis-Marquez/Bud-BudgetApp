@@ -2,13 +2,13 @@ package com.qewfhf.budgetapp.Users;
 
 import com.qewfhf.budgetapp.Budgets.Budget;
 import com.qewfhf.budgetapp.Budgets.BudgetService;
-import com.qewfhf.budgetapp.Users.User;
-import com.qewfhf.budgetapp.Users.UserRepository;
+import com.qewfhf.budgetapp.Budgets.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -56,8 +56,22 @@ public class UserService {
         return userRepository.findUserByUserId(userId);
     }
 
-    public List<String> getAvailableCategories(String userId) {
+    public List<Category> getAvailableCategories(String userId) {
         return userRepository.findUserByUserId(userId).orElseThrow().getAvailableCategories();
+    }
+
+    public Optional<Category> addCategory(String userId, String name) {
+        if (userRepository.findUserByUserId(userId).isPresent()) {
+        Category value = new Category(name);
+        mongoTemplate.update(User.class)
+                .matching(Criteria.where("userId").is(userId))
+                .apply(new Update().push("availableCategories").value(value))
+                .first();
+        return Optional.of(value);
+        }
+        else{
+            return Optional.empty();
+        }
     }
 
 }

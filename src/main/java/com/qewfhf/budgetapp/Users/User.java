@@ -2,6 +2,7 @@ package com.qewfhf.budgetapp.Users;
 
 import com.qewfhf.budgetapp.Accounts.Account;
 import com.qewfhf.budgetapp.Budgets.Budget;
+import com.qewfhf.budgetapp.Budgets.Category;
 import com.qewfhf.budgetapp.Transactions.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,13 +35,13 @@ public class User {
     private List<Transaction> transactionList;
     private List<Budget> budgetsList;
     private BigDecimal budgetMonth;
-    private List<String> availableCategories;
+    private List<Category> availableCategories;
     public User(String name, String email) {
         this.email = email;
         this.name = name;
         this.userId = UUID.randomUUID().toString();
-        availableCategories.add("Expenses");
-        availableCategories.add("Income");
+        availableCategories.add(new Category("Expenses",BigDecimal.valueOf(0),BigDecimal.ZERO));
+        availableCategories.add(new Category("Income",BigDecimal.valueOf(0),BigDecimal.valueOf(0)));
     }
     @Scheduled(cron = "0 0 0 1 * ?") // Run on the 1st day of each month
     public void scheduleMonthlyAddBudget() {
