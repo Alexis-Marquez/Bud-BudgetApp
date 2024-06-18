@@ -31,11 +31,10 @@ public class TransactionService {
     private BudgetService budgetService;
     @Autowired
     private MongoTemplate mongoTemplate;//for more complex operations
-    public Transaction createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time, String name, String description, String category, String type) throws AccountNotFoundException {
+    public Optional<Transaction> createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time, String name, String description, String category, String type) throws AccountNotFoundException {
         Optional<Account> curr = accountService.singleAccount(accountId);
         if(curr.isEmpty()){
-            System.out.println(accountId);
-            throw new AccountNotFoundException();
+            return Optional.empty();
         }
         Transaction transaction = transactionRepository.insert(new Transaction(accountId, userId, time, amount,name,curr.get().getName(),description, category, type));
             mongoTemplate.update(User.class)
@@ -43,8 +42,10 @@ public class TransactionService {
                     .apply(new Update().push("transactionList").value(transaction))
                     .first();
             accountUpdater(accountId,amount,type);
-            //budgetUpdater(userId,amount,type);
-            return transaction;
+            if(type.equals("expense")){
+                budgetUpdater(userId,amount,type);
+            }
+            return Optional.of(transaction);
     }
     private void accountUpdater(String accountId, BigDecimal amount, String type){
         Query queryAccountUpdate = new Query(new Criteria("accountId").is(accountId));
@@ -56,10 +57,10 @@ public class TransactionService {
         Query queryFindUser = new Query(new Criteria("userId").is(userId));
         User currUser = mongoTemplate.findOne(queryFindUser, User.class);
         assert currUser != null;
-        Budget currBudget = currUser.getBudgetsList().get(0);
+        Budget currBudget = currUser.getBudgetList().get(0);
         Query queryBudgetUpdate = new Query(new Criteria("id").is(currBudget.getId()));
         BigDecimal currTotalBudget = budgetService.singleBudget(currBudget.getId()).orElseThrow().getCurrentBalance();
-        Update updateOpBalanceBudget = new Update().set("currentBalance", currTotalBudget.subtract(amount));
+        Update updateOpBalanceBudget = new Update().set("currentBalance", currTotalBudget.add(amount));
         mongoTemplate.updateFirst(queryBudgetUpdate, updateOpBalanceBudget, Budget.class);
     }
     public List<Transaction> getNext5RecentTransactions(String userId, int page) {

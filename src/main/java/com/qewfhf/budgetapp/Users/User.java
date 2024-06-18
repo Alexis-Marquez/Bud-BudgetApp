@@ -33,18 +33,18 @@ public class User {
     private String email;
     private List<Account> accountList;
     private List<Transaction> transactionList;
-    private List<Budget> budgetsList;
-    private BigDecimal budgetMonth;
+    private List<Budget> budgetList;
+    private BigDecimal budgetMonthTotal;
     private List<Category> availableCategories;
     public User(String name, String email) {
         this.email = email;
         this.name = name;
         this.userId = UUID.randomUUID().toString();
-        availableCategories.add(new Category("Expenses",BigDecimal.valueOf(0),BigDecimal.ZERO));
-        availableCategories.add(new Category("Income",BigDecimal.valueOf(0),BigDecimal.valueOf(0)));
+        availableCategories.add(new Category("Expenses",BigDecimal.ZERO));
+        availableCategories.add(new Category("Income",BigDecimal.valueOf(0)));
     }
     @Scheduled(cron = "0 0 0 1 * ?") // Run on the 1st day of each month
     public void scheduleMonthlyAddBudget() {
-        budgetsList.add(0,new Budget(YearMonth.now().toString(),budgetMonth,this.userId));
+        budgetList.add(0,new Budget(YearMonth.now().toString(), budgetMonthTotal,this.userId));
     }
 }

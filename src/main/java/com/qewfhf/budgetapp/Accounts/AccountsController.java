@@ -19,7 +19,7 @@ public class AccountsController {
 //        return new ResponseEntity<Optional<ArrayList<Account>>>(accountService.accountsByTypeAndUserId(type,userId),HttpStatus.OK);
 //    }
 @DeleteMapping("/{id}")
-public ResponseEntity<Optional<Account>> deleteAccountById(@PathVariable String id){
+public ResponseEntity<Optional<Account>> deleteAccountById(@PathVariable String id, @PathVariable String userId){
     return new ResponseEntity<>(accountService.deleteAccountById(id), HttpStatus.OK);
 }
     @GetMapping("/all-accounts")
@@ -27,8 +27,14 @@ public ResponseEntity<Optional<Account>> deleteAccountById(@PathVariable String 
         return new ResponseEntity<>(accountService.getAccountsByUserId(userId), HttpStatus.OK);
     }
     @PostMapping("/new-account")
-    public ResponseEntity<Account> createAccount(@RequestBody Map<String, String> payload, @PathVariable String userId){
-        return new ResponseEntity<Account>(accountService.createAccount(userId, payload.get("type") ,payload.get("name")), HttpStatus.CREATED);
+    public ResponseEntity<Optional<Account>> createAccount(@RequestBody Map<String, String> payload, @PathVariable String userId){
+        if(payload.containsKey("type") && payload.containsKey("name")){
+            Optional<Account> account = accountService.createAccount(userId, payload.get("type"), payload.get("name"));
+            if(account.isPresent()) {
+                return new ResponseEntity<>(account, HttpStatus.CREATED);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
        @GetMapping("/account/{id}")
     public ResponseEntity<Optional<Account>> getSingleAccount(@PathVariable String id, @PathVariable String userId){

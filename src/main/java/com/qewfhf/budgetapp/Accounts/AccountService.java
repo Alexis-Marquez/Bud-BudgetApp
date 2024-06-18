@@ -2,6 +2,7 @@ package com.qewfhf.budgetapp.Accounts;
 
 import com.qewfhf.budgetapp.Transactions.TransactionRepository;
 import com.qewfhf.budgetapp.Users.User;
+import com.qewfhf.budgetapp.Users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,6 +21,11 @@ public class AccountService {
     private TransactionRepository transactionRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private User user;
+
     public Optional<List<Account>> getAccountsByUserId(String userId){
         return accountRepository.findAccountsByUserId(userId);
     }
@@ -33,13 +39,16 @@ public class AccountService {
         return accountRepository.findAccountsByTypeIgnoreCaseAndUserId(type, userId);
     }
 
-    public Account createAccount(String userId, String type, String name) {
-        Account account = accountRepository.insert(new Account(userId, type, name));
-        mongoTemplate.update(User.class)
-                .matching(Criteria.where("userId").is(userId))
-                .apply(new Update().push("accountList").value(account))
-                .first();
-        return account;
+    public Optional<Account> createAccount(String userId, String type, String name) {
+        if(userService.getUserByUserId(userId).isPresent()) {
+            Account account = accountRepository.insert(new Account(userId, type, name));
+            mongoTemplate.update(User.class)
+                    .matching(Criteria.where("userId").is(userId))
+                    .apply(new Update().push("accountList").value(account))
+                    .first();
+            return Optional.of(account);
+        }
+        return Optional.empty();
     }
 
     public Optional<Account> deleteAccountById(String id) {

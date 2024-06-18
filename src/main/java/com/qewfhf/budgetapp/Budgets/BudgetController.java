@@ -20,5 +20,4 @@ public class BudgetController {
     public ResponseEntity<Optional<Budget>> getLatestBudget(@PathVariable String userId){
         return new ResponseEntity<>(budgetService.getBudgetByUserId(userId), HttpStatus.OK);
     }
-
 }

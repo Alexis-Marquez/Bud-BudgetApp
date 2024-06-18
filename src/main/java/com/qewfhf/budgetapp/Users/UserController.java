@@ -27,17 +27,18 @@ public class UserController {
     @PostMapping("/{userId}/addCategory")
     public ResponseEntity<Optional<Category>> addCategory(@PathVariable String userId, @RequestBody Map<String, String> payload){
         if (payload.containsKey("name")){
+            if(payload.containsKey("total")){
+                return new ResponseEntity<>(userService.addCategory(userId, new BigDecimal(payload.get("total")), payload.get("name")), HttpStatus.CREATED);
+            }
             Optional<Category> category =userService.addCategory(userId, payload.get("name"));
             if (category.isPresent()){
                 return new ResponseEntity<Optional<Category>>(category, HttpStatus.CREATED);
             }
-            return new ResponseEntity<Optional<Category>>(HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<Optional<Category>>(HttpStatus.BAD_REQUEST);
     }
     @PostMapping("/new-user")
-    public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload){
+    public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload){ //Only meant for testing purposes
         if(payload.get("name").isEmpty() || payload.get("email").isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -45,7 +46,8 @@ public class UserController {
     }
     @PatchMapping("/{userId}/modify-budget/{newTotal}") //Only use when creating the first month budget of a new account or when modifying the current budget limit
     public ResponseEntity<Optional<User>> modifyBudget(@PathVariable String userId, @PathVariable BigDecimal newTotal){
-        return new ResponseEntity<>(userService.createBudget(userId, newTotal), HttpStatus.ACCEPTED);
+        Optional<User> budget = userService.createBudget(userId, newTotal);
+        return new ResponseEntity<>(budget, HttpStatus.ACCEPTED);
     }
 }
 

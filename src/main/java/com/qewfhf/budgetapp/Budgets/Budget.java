@@ -23,14 +23,14 @@ public class Budget {
     private ObjectId id;
     private BigDecimal currentBalance;
     private BigDecimal budgetMax;
-    private final String monthYear;
+    private String monthYear;
     private String userId;
 
 
     public Budget(String monthYear, BigDecimal budgetMax, String userId) {
         this.monthYear = monthYear;
         this.budgetMax=budgetMax;
-        this.currentBalance = budgetMax;
+        this.currentBalance = BigDecimal.ZERO;
         this.userId = userId;
 
     }

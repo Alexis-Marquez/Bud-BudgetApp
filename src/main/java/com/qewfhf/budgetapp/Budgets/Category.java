@@ -19,9 +19,9 @@ public class Category {
     private BigDecimal balance;
     @Getter
     private BigDecimal total;
-    public Category(String name, BigDecimal balance, BigDecimal total){
+    public Category(String name, BigDecimal total){
         this.id = String.valueOf(UUID.randomUUID());
-        this.balance=balance;
+        this.balance=total;
         this.name=name;
         this.total=total;
     }
