@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,7 @@ public class TransactionService {
     private BudgetService budgetService;
     @Autowired
     private MongoTemplate mongoTemplate;//for more complex operations
-    public Optional<Transaction> createTransaction(BigDecimal amount, String accountId, String userId, LocalDateTime time, String name, String description, String category, String type) throws AccountNotFoundException {
+    public Optional<Transaction> createTransaction(BigDecimal amount, String accountId, String userId, LocalDate time, String name, String description, String category, String type) throws AccountNotFoundException {
         Optional<Account> curr = accountService.singleAccount(accountId);
         if(curr.isEmpty()){
             return Optional.empty();
@@ -60,7 +61,7 @@ public class TransactionService {
         Budget currBudget = currUser.getBudgetList().get(0);
         Query queryBudgetUpdate = new Query(new Criteria("id").is(currBudget.getId()));
         BigDecimal currTotalBudget = budgetService.singleBudget(currBudget.getId()).orElseThrow().getCurrentBalance();
-        Update updateOpBalanceBudget = new Update().set("currentBalance", currTotalBudget.add(amount));
+        Update updateOpBalanceBudget = new Update().set("currentBalance", currTotalBudget.add(amount.abs()));
         mongoTemplate.updateFirst(queryBudgetUpdate, updateOpBalanceBudget, Budget.class);
     }
     public List<Transaction> getNext5RecentTransactions(String userId, int page) {

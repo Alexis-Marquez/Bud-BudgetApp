@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/transactions/{userId}")
@@ -22,12 +20,14 @@ private TransactionService transactionService;
 @PostMapping
     public ResponseEntity<Optional<Transaction>> createTransaction(@RequestBody Map<String, String> payload, @PathVariable String userId) {
     if(payload.containsKey("amount")&& payload.containsKey("accountId")&&payload.containsKey("name")&&payload.containsKey("type")&&payload.containsKey("dateTime")) {
-        if(Objects.equals(payload.get("type"), "expense") || Objects.equals(payload.get("type"), "income")) {
+        String type = payload.get("type");
+        System.out.println(type);
+        if(Objects.equals(type, "expense") || Objects.equals(type, "income")) {
         try {
             BigDecimal amount = new BigDecimal(payload.get("amount"));
             Optional<Transaction> transaction = transactionService.createTransaction(amount,
-                    payload.get("accountId"), userId, LocalDateTime.parse(payload.get("dateTime")), payload.get("name"), payload.get("description"),
-                    payload.get("category"), payload.get("type"));
+                    payload.get("accountId"), userId, LocalDate.parse(payload.get("dateTime")), payload.get("name"), payload.get("description"),
+                    payload.get("category"), type);
             if(transaction.isPresent()) {
                 return new ResponseEntity<>(transaction, HttpStatus.CREATED);
             }

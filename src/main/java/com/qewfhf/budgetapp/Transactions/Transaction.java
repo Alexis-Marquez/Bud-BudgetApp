@@ -21,14 +21,14 @@ public class Transaction {
     private ObjectId id;
     private String accountId;
     private String userId;
-    private LocalDateTime time;
+    private LocalDate time;
     private BigDecimal amount;
     private String name;
     private String description;
     private String accountName;
     private String category;
     private String type;
-    public Transaction(String accountId, String userId, LocalDateTime time, BigDecimal amount,String name, String accountName, String description, String category, String type) {
+    public Transaction(String accountId, String userId, LocalDate time, BigDecimal amount,String name, String accountName, String description, String category, String type) {
         this.accountId = accountId;
         this.userId = userId;
         this.time = time;
