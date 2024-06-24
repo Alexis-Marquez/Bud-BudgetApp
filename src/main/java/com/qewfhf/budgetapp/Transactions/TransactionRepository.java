@@ -13,4 +13,6 @@ public interface TransactionRepository extends MongoRepository<Transaction, Obje
 
     void deleteAllByAccountId(String id);
     List<Transaction> findNext5ByUserIdOrderByTimeDesc(String userId, Pageable pageable);
+
+    Integer countTransactionsByUserId(String userId);
 }

@@ -12,5 +12,4 @@ public interface BudgetRepository extends MongoRepository<Budget, ObjectId> {
     Optional<Budget> findBudgetById(ObjectId id);
 
     Optional<Budget> findBudgetByUserIdAndMonthYear(String userId, String yearMonth);
-
 }

@@ -19,9 +19,11 @@ private TransactionService transactionService;
 
 @PostMapping
     public ResponseEntity<Optional<Transaction>> createTransaction(@RequestBody Map<String, String> payload, @PathVariable String userId) {
-    if(payload.containsKey("amount")&& payload.containsKey("accountId")&&payload.containsKey("name")&&payload.containsKey("type")&&payload.containsKey("dateTime")) {
+    if(payload.containsKey("amount")&& payload.containsKey("accountId")&&payload.containsKey("name")&&payload.containsKey("type")&&payload.containsKey("dateTime")&&payload.containsKey("category")) {
+        if(payload.get("amount")==null&&payload.get("accountId")==null&&payload.get("name")==null&&payload.get("type")==null&&payload.get("dateTime")==null&&payload.get("category")==null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         String type = payload.get("type");
-        System.out.println(type);
         if(Objects.equals(type, "expense") || Objects.equals(type, "income")) {
         try {
             BigDecimal amount = new BigDecimal(payload.get("amount"));
@@ -42,5 +44,9 @@ private TransactionService transactionService;
 @GetMapping("/{page}")
     public ResponseEntity<List<Transaction>> getNextPageRecentTransactions(@PathVariable String userId, @PathVariable int page){
     return new ResponseEntity<>(transactionService.getNext5RecentTransactions(userId, page),HttpStatus.OK);
+}
+@GetMapping("/size")
+    public ResponseEntity<String> getTransactionsSize(@PathVariable String userId){
+    return new ResponseEntity<>(String.valueOf(transactionService.getTransactionSize(userId)), HttpStatus.OK);
 }
 }

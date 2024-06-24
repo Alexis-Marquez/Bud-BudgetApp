@@ -23,5 +23,8 @@ public class BudgetService {
     public Optional<Budget> getBudgetByUserId(String userId) {
         return budgetRepository.findBudgetByUserIdAndMonthYear(userId, YearMonth.now().toString());
     }
+    public Optional<Budget> getBudgetByUserIdAndMonthYear(String userId, YearMonth monthYear) {
+        return budgetRepository.findBudgetByUserIdAndMonthYear(userId, monthYear.toString());
+    }
 
 }

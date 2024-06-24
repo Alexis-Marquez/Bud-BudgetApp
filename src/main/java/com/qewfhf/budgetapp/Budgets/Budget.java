@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "budgets")
@@ -25,14 +26,15 @@ public class Budget {
     private BigDecimal budgetMax;
     private String monthYear;
     private String userId;
-
+    private List<Category> categories = new ArrayList<>();
 
     public Budget(String monthYear, BigDecimal budgetMax, String userId) {
         this.monthYear = monthYear;
         this.budgetMax=budgetMax;
         this.currentBalance = BigDecimal.ZERO;
         this.userId = userId;
-
+        categories.add(new Category("Expenses" ,BigDecimal.ZERO,this.userId));
+        categories.add(new Category("Income",BigDecimal.ZERO,this.userId));
     }
     public Budget(String monthYear, BigDecimal budgetMax, String userId, BigDecimal currentBalance){
         this.monthYear = monthYear;

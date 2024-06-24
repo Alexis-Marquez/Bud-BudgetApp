@@ -9,28 +9,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-
+@Data
 public class Category {
-    @Setter
-    @Getter
     private String name;
     private String id;
-    @Getter
+    private String userId;
     private BigDecimal balance;
-    @Getter
     private BigDecimal total;
-    public Category(String name, BigDecimal total){
+    public Category(String name, BigDecimal total, String userId){
         this.id = String.valueOf(UUID.randomUUID());
-        this.balance=total;
-        this.name=name;
-        this.total=total;
-    }
-
-    public Category(String name) {
-        this.id = String.valueOf(UUID.randomUUID());
+        this.userId = userId;
         this.balance=BigDecimal.ZERO;
         this.name=name;
-        this.total=BigDecimal.ZERO;
+        this.total=total;
     }
 }
 
