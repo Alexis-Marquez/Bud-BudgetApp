@@ -4,7 +4,6 @@ import com.qewfhf.budgetapp.Budgets.Budget;
 import com.qewfhf.budgetapp.Budgets.BudgetRepository;
 import com.qewfhf.budgetapp.Budgets.BudgetService;
 import com.qewfhf.budgetapp.Budgets.Category;
-import com.qewfhf.budgetapp.Transactions.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,11 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.YearMonth;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
 import java.util.*;
 @Service
 @EnableScheduling
@@ -42,13 +37,15 @@ public class UserService {
             this.createBudget(user.getUserId(), user.getBudgetMonthTotal(), YearMonth.now());
         }
     }
-
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findUserByEmail(username);
+    }
     public Optional<User> getUserByUserId(String userId){
         return userRepository.findUserByUserId(userId);
     }
 
-    public User createUser(String name, String email) {
-        return userRepository.insert(new User(name,email));
+    public User createUser(String name, String email, String password) {
+        return userRepository.insert(new User(name,email,password));
     }
 
     private void modifyBudget(String userId, BigDecimal newTotal) { //Sets the max budget field

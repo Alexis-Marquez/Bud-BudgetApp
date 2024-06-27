@@ -1,6 +1,7 @@
 package com.qewfhf.budgetapp.Users;
 
 import com.qewfhf.budgetapp.Budgets.Category;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final AuthenticationService service;
+
+    private final UserService userService;
     @GetMapping("/{userId}")
     public ResponseEntity<Optional<User>> getUser(@PathVariable String userId){
         return new ResponseEntity<Optional<User>>(userService.getUserByUserId(userId), HttpStatus.OK);
@@ -38,13 +41,20 @@ public class UserController {
         }
         return new ResponseEntity<Optional<Category>>(HttpStatus.BAD_REQUEST);
     }
-    @PostMapping("/new-user")
-    public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload){ //Only meant for testing purposes
-        if(payload.get("name").isEmpty() || payload.get("email").isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<User>(userService.createUser(payload.get("name"), payload.get("email")), HttpStatus.CREATED);
+    @PostMapping("/auth/new-user")
+    public ResponseEntity<AuthenticationResponse> createUser(@RequestBody RegisterRequest request){
+        System.out.println(request);
+        return ResponseEntity.ok(service.register(request));
     }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<AuthenticationResponse> loginUser(@RequestBody AuthenticationRequest request){
+        if(request.getPassword()!=null && !request.getPassword().isEmpty()&&request.getUsername()!=null && !request.getUsername().isEmpty()) {
+            return ResponseEntity.ok(service.login(request));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
     @PatchMapping("/{userId}/modify-budget/{newTotal}/{monthYear}") //Only use when creating the first month budget of a new account or when modifying the current budget limit
     public ResponseEntity<Optional<User>> modifyBudget(@PathVariable String userId, @PathVariable BigDecimal newTotal, @PathVariable YearMonth monthYear){
         Optional<User> budget = userService.createBudget(userId, newTotal, monthYear);
