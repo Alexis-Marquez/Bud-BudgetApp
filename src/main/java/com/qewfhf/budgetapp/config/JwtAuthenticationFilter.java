@@ -4,6 +4,7 @@ import com.mongodb.lang.NonNull;
 import com.qewfhf.budgetapp.Users.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String token;
         final String userEmail;
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
+        try{
+            token = parseJwt(request);
+            if(token != null){
             userEmail = jwtService.extractUsername(token);
             if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails user = this.userService.loadUserByUsername(userEmail);
-                if(jwtService.isTokenValid(token, user)){
+                if (jwtService.isTokenValid(token, user)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             user, null, user.getAuthorities()
                     );
@@ -45,11 +47,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-            filterChain.doFilter(request, response);
-        }
-        else{
-            filterChain.doFilter(request, response);
+            }
+        }catch (Exception e){
             return;
         }
+        filterChain.doFilter(request, response);
+    }
+    private String parseJwt(HttpServletRequest request) {
+        String jwt = jwtService.getJwtFromCookies(request);
+        return jwt;
     }
 }
