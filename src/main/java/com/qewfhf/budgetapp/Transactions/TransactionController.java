@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/transactions/{userId}")
+@RequestMapping("/api/{userId}/transactions")
 public class TransactionController {
 @Autowired
 private TransactionService transactionService;

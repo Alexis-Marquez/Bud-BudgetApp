@@ -4,7 +4,6 @@ import com.qewfhf.budgetapp.Budgets.Category;
 import com.qewfhf.budgetapp.config.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -16,7 +15,6 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -52,35 +50,39 @@ public class UserController {
     }
     @PostMapping("/auth/new-user")
     public ResponseEntity<ResponseEntity<String>> createUser(@RequestBody AuthenticationRequest request){
-        System.out.println(request);
         return ResponseEntity.ok(service.register(request));
     }
 
-    @PostMapping("/auth/login")
-    public ResponseEntity<ObjectId> loginUser(@RequestBody AuthenticationRequest request){
+    @PostMapping("/auth/log-in")
+    public ResponseEntity<String> loginUser(@RequestBody AuthenticationRequest request){
         if(request.getPassword()!=null && !request.getPassword().isEmpty()&&request.getUsername()!=null && !request.getUsername().isEmpty()) {
             return service.login(request);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+    @PostMapping("/auth/sign-out")
+    public ResponseEntity<?> logoutUser() {
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
+            User principle = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String userId = principle.getEmail();
+            refreshTokenService.deleteByUserId(userId);
+            ResponseCookie jwtCookie = jwtService.getCleanJwtCookie();
+            ResponseCookie jwtRefreshCookie = jwtService.getCleanJwtRefreshCookie();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                    .body(new MessageResponse("You've been signed out!"));
+        }
+        else {
+            return ResponseEntity.badRequest().body("You're not logged in!");
+        }
+    }
+
     @PatchMapping("/{userId}/modify-budget/{newTotal}/{monthYear}") //Only use when creating the first month budget of a new account or when modifying the current budget limit
     public ResponseEntity<Optional<User>> modifyBudget(@PathVariable String userId, @PathVariable BigDecimal newTotal, @PathVariable YearMonth monthYear){
         Optional<User> budget = userService.createBudget(userId, newTotal, monthYear);
         return new ResponseEntity<>(budget, HttpStatus.ACCEPTED);
-    }
-    @PostMapping("/auth/sign-out")
-    public ResponseEntity<?> logoutUser() {
-        User principle = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = principle.getEmail();
-        refreshTokenService.deleteByUserId(userId);
-        ResponseCookie jwtCookie = jwtService.getCleanJwtCookie();
-        ResponseCookie jwtRefreshCookie = jwtService.getCleanJwtRefreshCookie();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new MessageResponse("You've been signed out!"));
     }
 
     @PostMapping("/auth/refresh-token")

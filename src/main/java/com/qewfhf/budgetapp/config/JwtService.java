@@ -36,7 +36,7 @@ public class JwtService {
     @Value("${Java.jwtRefreshCookieName}")
     private String jwtRefreshCookie;
 
-    private final long jwtExpirationMs = 60*60*15;
+    private final long jwtExpirationMs = 20 * 60 * 1000;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -59,7 +59,7 @@ public class JwtService {
             UserDetails userDetails){
             return Jwts.builder().claims(claims)
                     .subject(userDetails.getUsername()).issuedAt(new Date(System.currentTimeMillis()))
-                    .expiration(new Date(System.currentTimeMillis()+1000*12)).signWith(getSignInKey(),
+                    .expiration(new Date(System.currentTimeMillis()+20*86400000)).signWith(getSignInKey(),
                     Jwts.SIG.HS256).compact();
     }
 
@@ -95,6 +95,7 @@ public class JwtService {
                 .path(path)
                 .maxAge(maxAge)
                 .httpOnly(true)
+                .sameSite("strict")
                 .build();
     }
 
@@ -121,13 +122,13 @@ public class JwtService {
     }
 
     public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
-        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refresh-token", 20*24 * 60 * 60);
+        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refresh-token", 20 * 24 * 60 * 60);
     }
     public String generateTokenFromUsername(String username) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .expiration(new Date((new Date()).getTime()+ jwtExpirationMs))
                 .signWith(getSignInKey())
                 .compact();
     }
