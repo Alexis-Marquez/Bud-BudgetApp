@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(!userId.equals("auth")&&(owner.isEmpty() || !userEmail.equals(owner.get().getEmail()))){
                 throw new AccessDeniedException("Access denied: User does not own the resource");
             }
-            if(SecurityContextHolder.getContext().getAuthentication() == null || SecurityContextHolder.getContext().getAuthentication().getPrincipal() == "anonymousUser") {
+            if(SecurityContextHolder.getContext().getAuthentication() == null || SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser")) {
                 UserDetails user = this.userService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(token, user)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -56,6 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                }else {
+                    throw new AccessDeniedException("Token Expired");
                 }
             }
             }

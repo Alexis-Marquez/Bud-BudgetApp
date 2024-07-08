@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +39,7 @@ public class AuthenticationService {
                         request.getUsername(), request.getPassword()
                 )
         );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = (User) authentication.getPrincipal();
 
         ResponseCookie jwtCookie = jwtService.generateJwtCookie(user.getEmail());
@@ -45,5 +49,19 @@ public class AuthenticationService {
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                 .body(user.getUserId());
+    }
+    ResponseEntity<?> logOut(String user) {
+        if (user!=null) {
+            refreshTokenService.deleteByUserId(user);
+            ResponseCookie jwtCookie = jwtService.getCleanJwtCookie();
+            ResponseCookie jwtRefreshCookie = jwtService.getCleanJwtRefreshCookie();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                    .body(new MessageResponse("You've been signed out!"));
+        }
+        else {
+            return ResponseEntity.badRequest().body("You're not logged in!");
+        }
     }
 }

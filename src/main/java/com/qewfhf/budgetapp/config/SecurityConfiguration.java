@@ -22,7 +22,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.ignoringRequestMatchers("/api/auth/**"))
+        http.csrf((csrf) -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest()

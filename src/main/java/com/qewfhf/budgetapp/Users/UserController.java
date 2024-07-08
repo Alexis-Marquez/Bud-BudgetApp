@@ -8,7 +8,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -35,16 +38,17 @@ public class UserController {
     public ResponseEntity<List<Category>> getAvailableCategories(@PathVariable String userId){
         return new ResponseEntity<>(userService.getAvailableCategories(userId), HttpStatus.OK);
     }
-    @PostMapping("/{userId}/addCategory")
+    @PostMapping("/{userId}/add-category")
     public ResponseEntity<Optional<Category>> addCategory(@PathVariable String userId, @RequestBody Map<String, String> payload){
+        Optional<Category> category;
         if (payload.containsKey("name")){
             if(payload.containsKey("total")){
-                return new ResponseEntity<>(userService.addCategory(userId, new BigDecimal(payload.get("total")), payload.get("name")), HttpStatus.CREATED);
+                category = userService.addCategory(userId, new BigDecimal(payload.get("total")), payload.get("name"));
             }
-            Optional<Category> category =userService.addCategory(userId, BigDecimal.ZERO, payload.get("name"));
-            if (category.isPresent()){
-                return new ResponseEntity<Optional<Category>>(category, HttpStatus.CREATED);
-            }
+            category =userService.addCategory(userId, BigDecimal.ZERO, payload.get("name"));
+        }else{category = Optional.empty();}
+        if (category.isPresent()){
+            return new ResponseEntity<Optional<Category>>(category, HttpStatus.CREATED);
         }
         return new ResponseEntity<Optional<Category>>(HttpStatus.BAD_REQUEST);
     }
@@ -62,20 +66,13 @@ public class UserController {
     }
 
     @PostMapping("/auth/sign-out")
-    public ResponseEntity<?> logoutUser() {
-        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
-            User principle = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String userId = principle.getEmail();
-            refreshTokenService.deleteByUserId(userId);
-            ResponseCookie jwtCookie = jwtService.getCleanJwtCookie();
-            ResponseCookie jwtRefreshCookie = jwtService.getCleanJwtRefreshCookie();
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                    .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                    .body(new MessageResponse("You've been signed out!"));
-        }
-        else {
-            return ResponseEntity.badRequest().body("You're not logged in!");
+    public ResponseEntity<?> logoutUser(HttpServletRequest request) {
+        String currJWT= jwtService.getJwtFromCookies(request);
+        if(currJWT!=null && !currJWT.isEmpty()) {
+            String user = jwtService.extractUsername(currJWT);
+            return service.logOut(user);
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 

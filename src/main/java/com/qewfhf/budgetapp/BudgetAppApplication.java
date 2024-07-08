@@ -21,7 +21,7 @@ public class BudgetAppApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/**").allowedOrigins("http://localhost:5173").allowCredentials(true);
+				registry.addMapping("/api/**").allowedOrigins("http://192.168.1.82:5173", "http://localhost:5173").allowCredentials(true);
 			}
 		};
 	}
